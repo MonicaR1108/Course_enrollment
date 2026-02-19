@@ -75,6 +75,12 @@ if(isset($_POST['register'])){
     <br><br>
 
     Password:
+    <div id="passwordRules" style="font-size:13px; margin-top:8px;">
+    <p id="len" style="color:red;">• Minimum 8 characters</p>
+    <p id="upper" style="color:red;">• At least one uppercase letter</p>
+    <p id="num" style="color:red;">• At least one number</p>
+    <p id="special" style="color:red;">• At least one special character</p>
+    </div>
     <input type="password" name="password" id="password" required>
     <br>
     <input type="checkbox" onclick="togglePassword()" style="margin-top:10px"> Show Password
@@ -130,16 +136,7 @@ if(isset($_POST['register'])){
 
 
 </form>
-<script>
-function togglePassword() {
-    var pass = document.getElementById("password");
-
-    if (pass.type === "password") {
-        pass.type = "text";
-    } else {
-        pass.type = "password";
-    }
-}
+<script src="/assets/javascript/register.js">
 </script>
 
 
