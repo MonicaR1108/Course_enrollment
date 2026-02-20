@@ -65,25 +65,61 @@ function togglePassword() {
 // });
 
 
-document.getElementById("registerForm").addEventListener("submit", function (e) {
+// document.getElementById("registerForm").addEventListener("submit", function (e) {
 
-    const password = document.getElementById("password").value;
+//     const password = document.getElementById("password").value;
 
-    const hasLength  = password.length >= 8;
-    const hasUpper   = /[A-Z]/.test(password);
-    const hasNumber  = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+//     const hasLength  = password.length >= 8;
+//     const hasUpper   = /[A-Z]/.test(password);
+//     const hasNumber  = /[0-9]/.test(password);
+//     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    if (!(hasLength && hasUpper && hasNumber && hasSpecial)) {
-        e.preventDefault();   // 🔴 THIS WAS THE MISSING GUARANTEE
-        alert(
-            "Password must contain:\n" +
-            "- Minimum 8 characters\n" +
-            "- One uppercase letter\n" +
-            "- One number\n" +
-            "- One special character"
-        );
+//     if (!(hasLength && hasUpper && hasNumber && hasSpecial)) {
+//         e.preventDefault();   // 🔴 THIS WAS THE MISSING GUARANTEE
+//         alert(
+//             "Password must contain:\n" +
+//             "- Minimum 8 characters\n" +
+//             "- One uppercase letter\n" +
+//             "- One number\n" +
+//             "- One special character"
+//         );
+//         return false;
+//     }
+
+// });
+
+    
+function togglePassword() {
+    var pw = document.getElementById("password");
+    pw.type = pw.type === "password" ? "text" : "password";
+}
+
+function validatePassword() {
+    var pw = document.getElementById("password").value;
+
+    var upper = /[A-Z]/.test(pw);
+    var number = /[0-9]/.test(pw);
+    var special = /[!@#$%^&*(),.?":{}|<>]/.test(pw);
+    var len = pw.length >= 8;
+
+    document.getElementById("len").style.color = len ? "green" : "red";
+    document.getElementById("upper").style.color = upper ? "green" : "red";
+    document.getElementById("num").style.color = number ? "green" : "red";
+    document.getElementById("special").style.color = special ? "green" : "red";
+
+    if (!(len && upper && number && special)) {
+        document.getElementById("passwordError").innerHTML = 
+            "Password must meet all the above requirements.";
         return false;
+    } else {
+        document.getElementById("passwordError").innerHTML = "";
+        return true;
     }
+}
 
+// Stop form submission if invalid
+document.querySelector("form").addEventListener("submit", function(e) {
+    if (!validatePassword()) {
+        e.preventDefault();
+    }
 });

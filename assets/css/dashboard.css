@@ -1,248 +1,339 @@
+/* Modern Dashboard Styles - Replace the <style> block in your dashboard.php */
 
-
-
-        /* =========================
-   RESET & GLOBAL STYLES
-========================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
-    list-style: none;
 }
-
-html{
-    height: 100%;
-    width: 100%;
-   
-}
-
 
 body {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    /* min-height: 100vh;
-    color: #333; */
-    display:flex;
-    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
 }
 
-/* =========================
-   NAVBAR
-========================= */
 .navbar {
-    position:relative;
-    top: 0;
-    left: 0;
-    transform: none;
+    background: rgba(74, 230, 217, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    background-color:  #040404;
-    backdrop-filter: blur(8px);
-    color: rgb(12, 10, 10);
-    padding:10px 40px;
-    border-radius: 3rem;
-    z-index: 1000;
-    margin: 5px;
     justify-content: space-between;
-    width: 100%;
-    height: 10%;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    border-radius: 20px;
+    z-index: 1000;
 }
 
 .navbar h2 {
-    font-size: 22px;
-    padding-right: 20px;
-    padding-top: 20px;
+    color: #4f46e5;
+    font-size: 1.8rem;
+    font-weight: 700;
 }
 
 .navbar ul {
-    list-style: none;
     display: flex;
-    gap: 25px;
+    list-style: none;
+    gap: 0;
 }
 
-.navbar ul li a {
-    color: #fff;
+.navbar li a {
+    color: #374151;
     text-decoration: none;
-    font-size: 15px;
-    transition: 0.3s;
-    gap: 10%;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    font-weight: 500;
     position: relative;
 }
 
-.navbar ul li a:hover {
-    color: #60a5fa;
+.navbar li a:hover {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
 }
 
-
-
-/* =========================
-   MAIN CONTAINER
-========================= */
 .container {
-    flex: 1;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    /* align-items: center; */
-    padding: 50px 8%;
-   
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
-
-
-/* #profile{
-    padding: 15px 20px; */
-/* } */
-
-/* =========================
-   CARD DESIGN
-========================= */
 .card {
-    background: #ffffff;
-    width: 100%;
-    max-width: 1100px;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* =========================
-   SECTIONS
-========================= */
 .section {
     display: none;
-    padding: 0;
-   
-
+    padding: 3rem;
+    min-height: 60vh;
 }
 
 .section.active {
     display: block;
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-.section h2 {
-    margin-bottom: 20px;
-    color: #111827;
-    font-size: 26px;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.section p {
-    margin-bottom: 10px;
-    line-height: 1.6;
-    font-size: 15px;
+/* Home Section */
+#home h2 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
 }
 
-/* =========================
-   PROFILE IMAGE
-========================= */
-.profile-img {
-    width: 130px;
-    height: 130px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-    border: 4px solid #667eea;
-}
-
-/* =========================
-   COURSE BOX
-========================= */
-.course-box {
-    background: #f3f4f6;
-    padding: 25px;
-    border-radius: 10px;
-    margin: 20px 0;
-}
-
-.course-box a {
-    color: #2563eb;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.course-box a:hover {
-    text-decoration: underline;
-}
-
-/* =========================
-   BUTTON
-========================= */
-.btn {
+#home p {
+    font-size: 1.3rem;
+    color: #6b7280;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 1rem 2rem;
+    border-radius: 16px;
     display: inline-block;
-    padding: 14px 25px;
-    background: #667eea;
-    color: #fff;
+}
+
+/* Profile Section */
+#profile form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#profile h2 {
+    text-align: center;
+    color: #1f2937;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+#profile img {
+    display: block;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+}
+
+#profile p {
+    margin-bottom: 1.5rem;
+}
+
+#profile input[type="text"],
+#profile textarea,
+#profile select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+#profile input[type="text"]:focus,
+#profile textarea:focus,
+#profile select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    transform: translateY(-2px);
+}
+
+#profile textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+#profile input[type="file"] {
+    padding: 0.75rem;
+    border: 2px dashed #d1d5db;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+#profile input[type="file"]:hover {
+    border-color: #4f46e5;
+    background: rgba(79, 70, 229, 0.05);
+}
+
+#profile button {
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+#profile button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px rgba(79, 70, 229, 0.3);
+}
+
+/* Projects Section */
+#projects h2, #projects h3 {
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+}
+
+#projects form {
+    background: rgba(79, 70, 229, 0.05);
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+#projects input[type="file"] {
+    padding: 0.75rem;
+    border: 2px dashed #4f46e5;
+    border-radius: 12px;
+    background: white;
+    margin-bottom: 1rem;
+}
+
+#projects button {
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#projects button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+#projects hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d1d5db, transparent);
+    margin: 2rem 0;
+}
+
+.project-item {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.project-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.project-item a:first-child {
+    color: #4f46e5;
+    font-weight: 500;
     text-decoration: none;
+}
+
+.project-item a:last-child {
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
     border-radius: 8px;
-    margin-top: 15px;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
-.btn:hover {
-    background: #4f46e5;
+.project-item a:last-child:hover {
+    background: #fef2f2;
 }
 
-/* =========================
-   RESPONSIVE DESIGN
-========================= */
-
-/* Tablet */
-@media (max-width: 1500px) {
-    .card {
-        padding: 30px;
-    }
-
-    /* .navbar ul {
-        gap: 15px;
-    } */
+/* Course Section */
+#course h2 {
+    color: #1f2937;
+    margin-bottom: 2rem;
 }
 
-/* Mobile */
+#course a {
+    display: inline-block;
+    padding: 1.5rem 3rem;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    text-decoration: none;
+    border-radius: 16px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+}
+
+#course a:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(245, 158, 11, 0.4);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-
     .navbar {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
+        gap: 1rem;
+        padding: 1rem;
     }
-
+    
     .navbar ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+    
+    .section {
+        padding: 2rem 1rem;
+    }
+    
+    #profile form {
+        padding: 0 1rem;
+    }
+    
+    .project-item {
         flex-direction: column;
-        width: 100%;
-        gap: 10px;
-    }
-
-    .navbar ul li {
-        width: 100%;
-    }
-
-    .navbar ul li a {
-        display: block;
-        padding: 10px 0;
-    }
-
-    .card {
-        padding: 20px;
-    }
-
-    .profile-img {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-/* Small Mobile */
-@media (max-width: 400px) {
-    .card {
-        padding: 20px;
-    }
-
-    .btn {
-        width: 100%;
+        gap: 1rem;
         text-align: center;
     }
 }
 
+@media (max-width: 480px) {
+    #home h2 {
+        font-size: 2rem;
+    }
+    
+    .navbar h2 {
+        font-size: 1.5rem;
+    }
+}
