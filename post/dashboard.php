@@ -40,55 +40,82 @@ elseif($course == "MySQL"){
     $course_link = "https://www.w3schools.com/mysql/";
 }
 
-// ================= PROJECTS FOLDER =================
-if(!is_dir("../uploads/projects")){
-    mkdir("../uploads/projects", 0777, true);
+//========================project=====================
+/* ================= CREATE PROJECT ================= */
+/*if(isset($_POST['create_project'])){
+    $project_name = mysqli_real_escape_string($conn, $_POST['project_name']);
+    $description  = mysqli_real_escape_string($conn, $_POST['description']);
+
+    mysqli_query($conn, "INSERT INTO projects (user_id, project_name, description)
+                         VALUES ('$user_id','$project_name','$description')");
+    header("Location: dashboard.php?section=projects");
+    exit();
+}
+*/
+if(isset($_POST['create_project'])){
+
+    $project_name = mysqli_real_escape_string($conn, $_POST['project_name']);
+    $description  = mysqli_real_escape_string($conn, $_POST['description']);
+
+    // MULTI-SELECT TECHNOLOGIES
+    $techs = $_POST['technologies'] ?? ''; 
+            //  ? implode(',', $_POST['technologies']) 
+            //  : '';
+
+    mysqli_query($conn, "INSERT INTO projects (user_id, project_name, description, technologies)
+                         VALUES ('$user_id', '$project_name', '$description', '$techs')");
+
+    header("Location: dashboard.php?section=projects");
+    exit();
 }
 
-// ================= MULTIPLE PROJECT UPLOAD =================
+/* ================= UPLOAD PROJECT FILES ================= */
 if(isset($_POST['upload_project'])){
-
     foreach($_FILES['project_files']['name'] as $key => $fileName){
-
         if(!empty($fileName)){
-
             $tmpName = $_FILES['project_files']['tmp_name'][$key];
-            $newName = time() . "_" . $fileName;
-            $uploadPath = "../uploads/projects/" . $newName;
-
-            if(move_uploaded_file($tmpName, $uploadPath)){
-                mysqli_query($conn, "INSERT INTO user_projects (user_id, file_name)
-                                     VALUES ('$user_id', '$newName')");
-            }
+            $newName = time()."_".$fileName;
+            move_uploaded_file($tmpName,"../uploads/projects/".$newName);
+            mysqli_query($conn,"INSERT INTO user_projects(user_id,file_name)
+                                VALUES('$user_id','$newName')");
         }
     }
-
     header("Location: dashboard.php?section=projects");
     exit();
 }
 
-// ================= DELETE PROJECT =================
+
+
+/* ================= IMPORT CSV ================= */
+if(isset($_POST['import_csv'])){
+    $project_id = $_POST['project_id'];
+    $csv = $_FILES['csv_file']['name'];
+    $tmp = $_FILES['csv_file']['tmp_name'];
+    $newName = time().'_'.$csv;
+    move_uploaded_file($tmp,"../uploads/projects/".$newName);
+
+    mysqli_query($conn,"INSERT INTO project_files(project_id,file_name,file_type)
+                        VALUES('$project_id','$newName','csv')");
+    header("Location: dashboard.php?section=projects");
+    exit();
+}
+//===========export=============
+
+
+/* ================= DELETE PROJECT ================= */
 if(isset($_GET['delete_project'])){
-
-    $project_id = $_GET['delete_project'];
-
-    $getFile = mysqli_query($conn, "SELECT * FROM user_projects 
-                                    WHERE id='$project_id' AND user_id='$user_id'");
-    $file = mysqli_fetch_assoc($getFile);
-
-    if($file){
-        $filePath = "../uploads/projects/" . $file['file_name'];
-
-        if(file_exists($filePath)){
-            unlink($filePath);
-        }
-
-        mysqli_query($conn, "DELETE FROM user_projects WHERE id='$project_id'");
+    $id = $_GET['delete_project'];
+    $q = mysqli_query($conn,"SELECT * FROM user_projects WHERE id='$id' AND user_id='$user_id'");
+    if($r=mysqli_fetch_assoc($q)){
+        unlink("../uploads/projects/".$r['file_name']);
+        mysqli_query($conn,"DELETE FROM user_projects WHERE id='$id'");
     }
-
     header("Location: dashboard.php?section=projects");
     exit();
 }
+
+
+//==========================profile==update=============
 
 if(isset($_POST['update_profile'])){
 
@@ -174,7 +201,6 @@ if(isset($_POST['update_profile'])){
         echo "Update Failed: " . mysqli_error($conn);
     }
 }
-
 
 // ================= FETCH UPDATED DATA =================
 $query = "SELECT * FROM register_users WHERE id='$user_id'";
@@ -278,50 +304,81 @@ $user = mysqli_fetch_assoc($result);
 
 <!-- SETTINGS -->
 <div id="projects" class="section <?php if(isset($_GET['section']) && $_GET['section']=='projects') echo 'active'; ?>">
+<div class="projects-flex">
 
-<h2>Upload Projects</h2>
-
-<form method="POST" enctype="multipart/form-data">
-    <input type="file" name="project_files[]" multiple required>
-    <br><br>
-    <button type="submit" name="upload_project">Upload Projects</button>
+    <!-- CREATE PROJECT -->
+    <div class="project-box">
+        <h3>Create Project</h3>
+        <form method="POST">
+            <input type="text" name="project_name" required>
+            <textarea name="description"></textarea>
+            <label><b>Technologies Used:</b></label>
+            <input type="text" id="techDisplay" readonly>
+            <input type="hidden" name="technologies" id="techHidden">
+            <input type="text" id="techInput">
+     <div id="techSuggestions"></div>
 </form>
+     </div>
+
+    <!-- UPLOAD FILES -->
+    <div class="project-box">
+        <h3>Upload Files</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="project_files[]" multiple required>
+            <button name="upload_project">Upload</button>
+            <br><br>
+         <button name="create_project">Create</button>
+        </form>
+    </div>
+
+</div>
 
 <hr>
 
 <h3>Your Uploaded Projects</h3>
 
+<div class="project-list">
+
 <?php
-$projectQuery = mysqli_query($conn, "SELECT * FROM user_projects 
-                                     WHERE user_id='$user_id' 
-                                     ORDER BY id DESC");
-
-if(mysqli_num_rows($projectQuery) > 0){
-
-    while($project = mysqli_fetch_assoc($projectQuery)){
+$q = mysqli_query($conn,"SELECT * FROM user_projects WHERE user_id='$user_id' ORDER BY id DESC");
+if(mysqli_num_rows($q)>0){
+while($p=mysqli_fetch_assoc($q)){
 ?>
+<div class="project-item">
 
-<div style="margin-bottom:10px; padding:8px; border:1px solid #ccc; border-radius:5px;">
 
-    <a href="../uploads/projects/<?php echo $project['file_name']; ?>" target="_blank">
-        <?php echo $project['file_name']; ?>
-    </a>
 
-    <a href="dashboard.php?section=projects&delete_project=<?php echo $project['id']; ?>"
-       onclick="return confirm('Are you sure you want to delete this project?')"
-       style="color:red; margin-left:15px;">
-       Remove
-    </a>
+
+    <div class="project-name">
+        <a href="../uploads/projects/<?php echo $p['file_name']; ?>" target="_blank">
+            <?php echo $p['file_name']; ?>
+        </a>
+    </div>
+
+    <div class="project-actions">
+        <a href="../uploads/projects/<?php echo $p['file_name']; ?>" download>Download</a>
+        <a href="edit_project.php?id=<?php echo $p['id']; ?>">Edit</a>
+        <a href="dashboard.php?section=projects&delete_project=<?php echo $p['id']; ?>"
+           onclick="return confirm('Delete this project?')" class="danger">
+           Delete
+        </a>
+        <a href="dashboard.php?export_project=<?php echo $p['id']; ?>"
+   style="margin-left:10px; color:#16a34a; font-weight:500;">
+   Export CSV
+</a>
+
+    </div>
+
+    <!-- <form method="POST" enctype="multipart/form-data" class="csv-form">
+        <input type="hidden" name="project_id" value="<?php echo $p['id']; ?>">
+        <input type="file" name="csv_file" required>
+        <button name="import_csv">Import CSV</button>
+    </form> -->
 
 </div>
+<?php }} else { echo "<p>No projects uploaded yet.</p>"; } ?>
 
-<?php 
-    }
-} else {
-    echo "<p>No projects uploaded yet.</p>";
-}
-?>
-
+</div>
 </div>
 
 <!-- COURSE -->
@@ -351,7 +408,112 @@ if(mysqli_num_rows($projectQuery) > 0){
 .section.active { display:block; }
 .navbar ul { list-style:none; }
 .navbar li { display:inline; margin-right:15px; }
+.section{display:none}
+.section.active{display:block}
+
+/* ===== PROJECT STYLES ONLY ===== */
+.projects-flex{
+    display:flex;
+    gap:20px;
+    margin-bottom:20px;
+}
+.project-box{
+    flex:1;
+    background:#f8fafc;
+    padding:15px;
+    border-radius:8px;
+}
+.project-box input,
+.project-box textarea{
+    width:100%;
+    padding:8px;
+    margin-bottom:10px;
+}
+.project-list{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+.project-item{
+    border:1px solid #ccc;
+    padding:12px;
+    border-radius:8px;
+}
+.project-actions a{
+    margin-right:10px;
+}
+.csv-form{
+    margin-top:10px;
+    display:flex;
+    gap:10px;
+}
+.danger{color:red}
+
+#techInput{
+    width:100%;
+    padding:8px;
+    margin-bottom:6px;
+}
+
+#techSuggestions{
+    border:1px solid #cbd5e1;
+    background:#fff;
+    max-height:140px;
+    overflow-y:auto;
+    border-radius:6px;
+}
+
+#techSuggestions div{
+    padding:8px;
+    cursor:pointer;
+}
+
+#techSuggestions div:hover{
+    background:#2563eb;
+    color:#fff;
+}
+
+
 </style>
+<!-- <script src="../assets/javascript/dashboard.js"></script> -->
+ <script>
+const technologies = [
+    "HTML","CSS","JavaScript","PHP","MySQL","Python",
+    "Bootstrap","React","Node.js","Laravel","Django",
+    "MongoDB","Git","jQuery"
+];
+
+let selectedTech = [];
+
+const input = document.getElementById("techInput");
+const display = document.getElementById("techDisplay");
+const hidden = document.getElementById("techHidden");
+const box = document.getElementById("techSuggestions");
+
+input.addEventListener("keyup", function () {
+    const val = this.value.toLowerCase();
+    box.innerHTML = "";
+
+    if (!val) return;
+
+    technologies.forEach(t => {
+        if (t.toLowerCase().includes(val) && !selectedTech.includes(t)) {
+            let div = document.createElement("div");
+            div.textContent = t;
+            div.onclick = () => addTech(t);
+            box.appendChild(div);
+        }
+    });
+});
+
+function addTech(tech){
+    selectedTech.push(tech);
+    display.value = selectedTech.join(", ");
+    hidden.value = selectedTech.join(",");
+    input.value = "";
+    box.innerHTML = "";
+}
+</script>
 
 </body>
 </html>
